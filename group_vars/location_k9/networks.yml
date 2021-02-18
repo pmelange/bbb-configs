@@ -1,0 +1,50 @@
+---
+# TODO: Adopt to K9
+
+
+ipv6_prefix: '2001:bf7:830:8400::/56'
+
+networks:
+  - vid: 12
+    role: mesh
+    name: mesh_sama
+    prefix: 10.31.252.193/32
+    ipv6_subprefix: -2
+    mesh_metric: 1024
+    assignments:
+      scharni-core: 0
+
+  - vid: 40
+    role: dhcp
+    inbound_filtering: true
+    enforce_client_isolation: true
+    prefix: 10.31.79.192/26
+    ipv6_subprefix: 0
+    assignments:
+      scharni-core: 1
+
+  - vid: 42
+    role: mgmt
+    prefix: 10.31.52.160/27
+    gateway: 1
+    dns: 1
+    ipv6_subprefix: 1
+    assignments:
+      scharni-core: 1
+      scharni-switch: 2
+      scharni-wilgu10: 3
+      scharni-zwingli: 3
+      scharni-ap1: 30
+      scharni-ap2: 29
+      scharni-ap3: 28
+
+location_scharni__channel_assignments_11a_standard__to_merge:
+  scharni-ap1: 36-40
+  scharni-ap2: 44-40
+  scharni-ap3: 36-40
+
+location_scharni__channel_assignments_11g_standard__to_merge:
+  scharni-ap1: 11-20
+  scharni-ap2: 6-20
+  scharni-ap3: 1-20
+
