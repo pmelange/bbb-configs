@@ -90,6 +90,10 @@ inbound_allow:
     dst: '2001:bf7:750:2e00::10/128'
     proto: tcp
     dst_port: 80
+  - name: 'segen-emessage'
+    dst: ' 2001:bf7:760:1000::2/128'
+    proto: tcp
+    dst_port: 22
 #  - name: Rule Description (mandatory)
 #    dst: Destination IP (mandatory)
 #    src: Source IP
