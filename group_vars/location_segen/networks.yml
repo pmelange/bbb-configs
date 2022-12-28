@@ -51,6 +51,7 @@ networks:
     enforce_client_isolation: false
     assignments:
       segen-core: 1
+      segen-emessage: 2
 
   - vid: 101
     role: mesh
