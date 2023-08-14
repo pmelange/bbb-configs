@@ -1,0 +1,44 @@
+---
+
+dhcp_static_leases:
+  - name: scherer8-vmhost
+    mac: 00:10:e0:0f:43:48
+    ip: 10.230.229.5
+    dns: 1
+  - name: scherer8-buildbot
+    mac: 52:54:00:db:45:63
+    ip: 10.230.229.6
+    dns: 1
+  - name: basta-router
+    mac: 52:54:00:d7:7c:cf
+    ip: 10.230.229.7
+    dns: 0
+  - name: ttor
+    mac: 52:54:00:b7:91:81
+    ip: 10.230.229.10
+    dns: 0
+  - name: automaton
+    mac: 28:d2:44:30:a2:f6
+    ip: 10.230.229.11
+    dns: 1
+  - name: scherer8-unifi-controller
+    mac: 52:54:00:8f:09:c9
+    ip: 10.230.229.22
+    dns: 1
+dhcp_custom_domain_names:
+  - name: mwan
+    ip: 10.230.229.2
+  - name: pserver
+    ip: 10.230.229.3
+  - name: scherer8-vmhost
+    ip: 10.230.229.5
+  - name: scherer8-buildbot
+    ip: 10.230.229.6
+  - name: scherer8-wetter
+    ip: 10.230.229.10
+  - name: automaton
+    ip: 10.230.229.11
+  - name: unifi
+    ip: 10.230.229.22
+  - name: scherer8-wetter
+    ip: 2001:bf7:750:2e00::10

@@ -1,0 +1,6 @@
+---
+
+olsrd_services:
+  - name: Scherer8-Wetter
+    protocol: tcp
+    url: http://scherer8-wetter.olsr:80/

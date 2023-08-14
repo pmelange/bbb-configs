@@ -1,0 +1,9 @@
+---
+
+snmp_devices:
+  - hostname: scherer8-perleberger
+    address: 10.230.226.226
+    snmp_profile: airos_8
+  - hostname: scherer8-bht
+    address: 10.230.226.230
+    snmp_profile: airos_8

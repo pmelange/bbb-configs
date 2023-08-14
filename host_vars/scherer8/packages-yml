@@ -1,0 +1,4 @@
+---
+
+host__packages__to_merge:
+  - "collectd-mod-cpu htop"
