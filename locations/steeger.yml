@@ -1,0 +1,119 @@
+---
+
+location: Steegerstr. 61
+location_nice: steeger-spot
+latitude: 52.56268768383117
+longitude: 13.395002442070059
+height: 20
+contact_nickname: 'Puck'
+contacts:
+  - 'none'
+
+hosts:
+  - hostname: steeger-spot
+    role: corerouter
+    model: "linksys_e8450-ubi"
+#    wireless_profile: freifunk_default
+    wireless_profile: steeger
+
+ipv6_prefix: "2001:bf7:fff:ffff::/56"
+
+networks:
+
+  - vid: 20
+    role: mesh
+    name: 11s-5ghz
+    prefix: 10.31.30.189/32
+    ipv6_subprefix: -20
+    mesh_ap: steeger-spot
+    mesh_radio: 11a_stardard
+    mesh_iface: mesh
+
+  - vid: 21
+    role: mesh
+    name: 11s-2ghs
+    prefix: 10.31.30.190/32
+    ipv6_subprefix: -21
+    mesh_ap: steeger-spot
+    mesh_radio: 11n_stardard
+    mesh_iface: mesh
+
+  - vid: 40
+    role: dhcp
+    inbound_filtering: true
+    enforce_client_isolation: false
+    prefix: 10.36.121.208/28
+    ipv6_subprefix: 0
+    assignments:
+      steeger-spot: 1
+
+  - vid: 50
+    role: uplink
+    untagged: true
+
+  - role: tunnel
+    ifname: ts_wg0
+    mtu: 1280
+    prefix: 10.31.96.220/32
+    wireguard_port: 51820
+
+  - role: tunnel
+    ifname: ts_wg1
+    mtu: 1280
+    prefix: 10.31.96.221/32
+    wireguard_port: 51821
+
+location__channel_assignments_11a_standard__to_merge:
+  steeger-spot: 36-40
+
+location__channel_assignments_11g_standard__to_merge:
+  steeger-spot: 13-20
+
+location__wireless_profiles__to_merge:
+  - name: steeger
+    devices:
+      - radio: 11a_standard
+        legacy_rates: false
+        country: DE
+      - radio: 11g_standard
+        legacy_rates: false
+        country: DE
+
+  - ifaces:
+      - mode: ap
+        ssid: Xberlin.freifunk.net
+        encryption: none
+        network: dhcp
+        radio: [11a_standard, 11g_standard]
+        ifname_hint: ff
+
+      - mode: ap
+        ssid: Xberlin.freifunk.net Encrypted
+        hidden: true
+        encryption: owe
+        network: dhcp
+        radio: [11a_standard, 11g_standard]
+        ifname_hint: ffowe
+        ieee80211w: 1
+
+      - mode: mesh
+        mesh_id: Mesh-Freifunk-Berlin
+        radio: [11a_standard, 11g_standard]
+        mcast_rate: 12000
+        mesh_fwding: 0
+        ifname_hint: mesh
+
+#      - mode: ap
+#        ssid: puckifunki
+#        encryption: psk2
+#        key: 'file:/tmp/key'
+#        network: uplink
+#        radio: [11a_standard, 11g_standard]
+#        ifname_hint: pr
+
+ssh_keys:
+  - comment: puck@WayneSchlege
+    key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/doXvrKnJ1bJEBQhn2p/0Sd1j108/Rosk52/Svqq9DdLh9uuDAVlwt4h++0sVGp2Eb5d9yDRkRgAiv0ZpoCZUw8tzN3B+BQv195LpIPoyZE0M1zTlQwYsTFKDL7D59kfMTtzzNZIRI8bdyxLSODCbUCF/h6FpTCW031NpwRwSmUUlgRA10ZNaXntLNHSdWHaQRDqcYqY4jebAO3wfdU4104j65WhylPx+dIl8gaxKVjx0X9yc4CUxjV6b5F4cldHHlBu77xTrEPNQ2QPYvrAXfAunpo56riWWoPfv2ertjWlyu5PuO1QKpB5YQrzntVgK7v8sMdKJ8ZMekTyLxhkHitCVTmlz6hD84hAPzk2T+kq4Rp+Xg0m0GRFaGOTH+9mYOMkYNdBXh6CwWkJU062NBlk3Rl6/IwXQ9TcX++212AQ2m0Hpz2Klo1fonBU9Dax4M8OY8QfRnmDSRSDQuxBbLc5KazrzJKp3Gpaqt3lk3ds3GlkO1dXmejJt4AmebSCEcdmks0mWHH8aXtABBLPsIF/Pbu7w5jwjRPaR5t7B0QqMxVclm5s/8kE/X//aBemnRI+IJ0jjRpQORR2zcHufALgeAm6uH3Lwuu3RgynngsFyyNlpfOrEKgG1O3pEKPKZlYYBGcHTBh0GEsOvY+KOJV6k+6IS7aogGAyXPFEAMQ== puck@WayneSchlegel
+  - comment: perry
+    key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbv8aJweuDFx34itdPpj7Okk2XcLyhIR2TVOoKlfbdGnVvXrPhblcd/Nt4INFv50/3USRmU90nTQnAdd/oniEaT3pM/ZaLz/quFa1aiP4Vu/+GlE9vEHinzimkOh7sHS8XlhC//WKHqb7tKDMW81A+YoR8A+uGjbv8pY8EzD/dATG9G2awj0erRAAXqx4CVMVxX75jKjKmf52iR8baoEjyw5zxhLHYEyAfcJ6k8q887+PeGfjswFtYx8qklx43PdfR7Fg6O+5ai111F6Lg5Yijl0iVKsIpIUKuUDiPAGWGPhPcktsQt8Cr7kbZEYB/tZ2mMJ1cXkWJ+r9MCxutFCJj pmelange@automaton
+
