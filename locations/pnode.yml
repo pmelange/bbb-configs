@@ -1,0 +1,119 @@
+---
+
+location: pnode
+location_nice: Gruentalerstr. 38, 13359 Berlin
+latitude: 52.55571
+longitude: 13.39391
+altitude: 20
+contact_nickname: "Perry"
+contacts:
+  - "isprotejesvalkata [attt] gmail com"
+
+hosts:
+  - hostname: pnode
+    role: corerouter
+    model: "genexis_pulse-ex400"
+    wireless_profile: zorrow
+    host__packages__to_merge:
+      - htop
+    host__rclocal__to_merge:
+      - |
+        uci -q get system.@system[0].bbb_config_first_boot > /dev/null
+        if [ "1" -eq $? ]; then
+          # Change the port tagging
+          uci set network.vlan_50.ports="lan:t wan:u"
+          uci set network.vlan_40.ports="lan:u wan:t"
+          uci commit network
+          # Set up static lease for automaton
+          uci set dhcp.automaton=host
+          uci set dhcp.automaton.name=automaton
+          uci set dhcp.automaton.ip=10.248.91.130
+          uci set dhcp.automaton.mac='98:fa:9b:84:eb:e0'
+          uci set dhcp.automaton.dns=1
+          uci set dhcp.dhcp_dhcp.start=3
+          uci commit dhcp
+          /etc/init.d/dnsmasq restart
+          # Prevent this from running again by setting a config option
+          uci set system.@system[0].bbb_config_first_boot=1
+          uci commit system
+          reload_config
+        fi
+
+ipv6_prefix: 2001:bf7:750:ba00::/56
+
+networks:
+  - vid: 20
+    role: mesh
+    name: mesh_core_5
+    prefix: 10.248.67.92/32
+    ipv6_subprefix: -20
+    mesh_ap: pnode
+    mesh_radio: 11a_standard
+    mesh_iface: mesh
+
+  - vid: 21
+    role: mesh
+    name: mesh_core_2
+    prefix: 10.248.67.93/32
+    ipv6_subprefix: -21
+    mesh_ap: pnode
+    mesh_radio: 11g_standard
+    mesh_iface: mesh
+
+  - vid: 40
+    role: dhcp
+    name: dhcp
+    prefix: 10.248.91.128/25
+    ipv6_subprefix: -40
+    inbound_filtering: false
+    enforce_client_isolation: false
+    assignments:
+      pnode: 1
+      automaton: 2
+
+  - vid: 50
+    role: uplink
+    untagged: true
+
+  - role: tunnel
+    ifname: ts_wg0
+    mtu: 1280
+    prefix: 10.248.67.94/32
+    wireguard_port: 51820
+
+  - role: tunnel
+    ifname: ts_wg1
+    mtu: 1280
+    prefix: 10.248.67.95/32
+    wireguard_port: 51821
+
+location__channel_assignments_11a_standard__to_merge:
+  pnode: 36-40
+
+location__wireless_profiles__to_merge:
+  - name: zorrow
+    ifaces:
+      - mode: ap
+        ssid: berlin.freifunk.net
+        encryption: none
+        network: dhcp
+        radio: [11a_standard, 11g_standard]
+        ifname_hint: ff
+
+      - mode: ap
+        ssid: hausbuch
+        encryption: psk-mixed
+        key: "file:/root/wifi-pwd"
+        network: uplink
+        radio: [11a_standard, 11g_standard]
+        ifname_hint: haus
+
+      - mode: mesh
+        mesh_id: Mesh-Freifunk-Berlin
+        radio: [11a_standard, 11g_standard]
+        mcast_rate: 12000
+        mesh_fwding: 0
+        mesh_nolearn: 1
+        ifname_hint: mesh
+
+
