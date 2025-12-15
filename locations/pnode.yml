@@ -16,6 +16,11 @@ hosts:
     wireless_profile: zorrow
     host__packages__to_merge:
       - htop
+    # override the default ppp package list
+    all_ppp__packages__to_merge:
+      - ppp
+      - ppp-mod-pppoe
+      - luci-proto-ppp
     host__rclocal__to_merge:
       - |
         uci -q get system.@system[0].bbb_config_first_boot > /dev/null

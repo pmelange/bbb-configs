@@ -30,8 +30,11 @@ all__packages__to_merge:
   - nftables
   - tcpdump-mini
   - vnstat
+
+all_ppp__packages__to_merge:
   - -ppp
   - -ppp-mod-pppoe
+  - -luci-proto-ppp
 
 all_luci_base__packages__to_merge:
   - libiwinfo-lua
