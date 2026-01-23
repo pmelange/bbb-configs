@@ -1,0 +1,101 @@
+---
+location: openwrt-testlab01-port08
+location_nice: testlab01-port08
+latitude: 52.52081970085464
+longitude: 13.409418231737128
+
+contact_nickname: "Stadtfunk gGmbH"
+contacts:
+  - "noc@stadtfunk.net"
+
+hosts:
+  - hostname: testdev08
+    role: corerouter
+    model: "zyxel_nwa50ax"
+    wireless_profile: testdev08
+    host__rclocal__to_merge:
+      - |
+        uci -q get system.@system[0].bbb_config_first_boot > /dev/null
+        if [ "1" -eq $? ]; then
+          # Prevent this from running again by setting a config option
+          uci set system.@system[0].bbb_config_first_boot=1
+          uci commit system
+
+          reload_config
+        fi
+
+ipv6_prefix: "2001:bf7:750:9700::/56"
+
+# got following prefixes:
+# Router:
+#          2001:bf7:750:9700::/56
+# --DHCP:  10.248.248.112/28
+# --MESH:  10.248.251.112/28
+#    WIFI MESH:
+#          10.248.251.112/32
+#          10.248.251.113/32
+
+# Disable noping
+dhcp_no_ping: false
+
+networks:
+  - vid: 108
+    role: dhcp
+    name: dhcp
+    prefix: 10.248.248.112/28
+    ipv6_subprefix: 40
+    assignments:
+      testdev08: 1
+
+  - vid: 50
+    role: uplink
+    untagged: true
+
+  - vid: 20
+    role: mesh
+    name: mesh_5ghz
+    prefix: 10.248.251.112/32
+    ipv6_subprefix: -1
+    mesh_ap: testdev08
+    mesh_radio: 11a_standard
+    mesh_iface: mesh
+
+  - vid: 21
+    role: mesh
+    name: mesh_2ghz
+    prefix: 10.248.251.113/32
+    ipv6_subprefix: -2
+    mesh_ap: testdev08
+    mesh_radio: 11g_standard
+    mesh_iface: mesh
+
+  - role: tunnel
+    ifname: ts_wg0
+    mtu: 1280
+    prefix: 10.248.251.114/32
+    wireguard_port: 51820
+
+  - role: tunnel
+    ifname: ts_wg1
+    mtu: 1280
+    prefix: 10.248.251.115/32
+    wireguard_port: 51821
+
+location__wireless_profiles__to_merge:
+  - name: testdev08
+    ifaces:
+      - mode: ap
+        ssid: testdev08.berlin.freifunk.net
+        encryption: none
+        network: dhcp
+        radio: [11a_standard, 11g_standard]
+        ifname_hint: ff
+
+      - mode: mesh
+        mesh_id: Mesh-Freifunk-Berlin
+        radio: [11a_standard, 11g_standard]
+        mcast_rate: 12000
+        mesh_fwding: 0
+        mesh_nolearn: 1
+        ifname_hint: mesh
+
