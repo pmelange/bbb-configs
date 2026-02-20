@@ -74,6 +74,8 @@ networks:
   - vid: 50
     role: uplink
     untagged: true
+    ingress: 200
+    egress: 100
 
   - role: tunnel
     ifname: ts_wg0
