@@ -11,7 +11,7 @@ hosts:
   - hostname: hausbuch-core
     role: corerouter
     model: "x86-64"
-    openwrt_version: 24.10-SNAPSHOT
+    openwrt_version: 25.12-SNAPSHOT
     image_search_pattern: "*-ext4-combined.img*"
     host__packages__to_merge:
       - qemu-ga
@@ -48,10 +48,16 @@ hosts:
           # add static lease for HH switch3 (future)
           # add static lease for SF switch1
           uci set dhcp.swsf1=host
-          uci set dhcp.swsf1.name'sw-sf1'
+          uci set dhcp.swsf1.name='sw-sf1'
           uci set dhcp.swsf1.ip=10.248.109.136
-          uci set dhcp.swsf1.mac=18:e8:29:43:e9:aa
+          uci set dhcp.swsf1.mac=08:bd:43:a8:99:4b
           uci set dhcp.swsf1.dns=1
+          # add static lease for sf switch2
+          uci set dhcp.swsf2=host
+          uci set dhcp.swsf2.name='sw-sf2'
+          uci set dhcp.swsf2.ip=10.248.109.137
+          uci set dhcp.swsf2.mac=68:ff:7b:26:d5:44
+          uci set dhcp.swsf2.dns=1
           # start the dhcp network at the 10th address
           uci set dhcp.dhcp_dhcp.start=10
           uci commit dhcp
