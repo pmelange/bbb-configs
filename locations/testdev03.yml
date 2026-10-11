@@ -24,6 +24,14 @@ hosts:
           reload_config
         fi
 
+feed: "file:///home/pmelange/src/falter/falter-packages/out/falter/packages.adb"
+feed_key: "/home/pmelange/src/falter/falter-packages/out/public-key.pem"
+
+location__packages__to_merge:
+  - falter-berlin-statistics
+  - -wpad-basic-mbedtls
+  - wpad-mesh-mbedtls
+
 ipv6_prefix: "2001:bf7:750:9200::/56"
 
 # got following prefixes:
