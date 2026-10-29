@@ -1,0 +1,279 @@
+---
+
+location: rhxbunifi
+location_nice: Rathaus Kreuzberg
+#latitude: 52.493778
+#longitude: 13.385290
+altitude: 74
+community: berlin
+
+hosts:
+  - hostname: rhxb-unifi-core
+    role: corerouter
+    model: "tplink_tl-wdr4900-v1"
+    wireless_profile: testunifi
+    host__rclocal__to_merge:
+      - |
+        uci -q get system.@system[0].bbb_config_first_boot > /dev/null
+        if [ "1" -eq $? ]; then
+          uci set network.udmv4='route'
+          uci set network.udmv4.interface='mgmt'
+          uci set network.udmv4.target='10.248.91.192/26'
+          uci set network.udmv4.gateway='10.248.91.131'
+          uci set network.udmv6='route6'
+          uci set network.udmv6.interface='mgmt'
+          uci set network.udmv6.target='2001:bf7:750:ba02::/64'
+          uci set network.udmv6.gateway='2001:bf7:750:ba01::131'
+          uci commit network
+          /etc/init.d/dnsmasq restart
+          # Prevent this from running again by setting a config option
+          uci set system.@system[0].bbb_config_first_boot=1
+          uci commit system
+          # reload the config to accept these changes
+          reload_config
+        fi
+
+snmp_devices:
+  - hostname: rhxb-switch-roof # EdgeSwitch 24 250W
+    address: 10.248.91.130
+    snmp_profile: "edgeswitch"
+
+  - hostname: rhxb-l105 # airFiber 60 LR
+    address: 10.248.91.131
+    snmp_profile: "af60"
+
+  - hostname: rhxb-flughafen # airFiber 60 LR
+    address: 10.248.91.132
+    snmp_profile: "af60"
+
+  - hostname: rhxb-manstein # NanoBridge M5
+    address: 10.248.91.133
+    snmp_profile: "airos_6"
+
+  - hostname: rhxb-rhnk # airFiber 60 LR
+    address: 10.248.91.134
+    snmp_profile: "af60"
+
+  - hostname: rhxb-dtmb # PowerBeam 5AC ISO
+    address: 10.248.91.135
+    snmp_profile: "airos_8"
+
+  - hostname: rhxb-no-5ghz # Rocket 5AC Lite
+    address: 10.248.91.136
+    snmp_profile: "airos_8"
+
+  - hostname: rhxb-sw-5ghz # Rocket 5AC Lite
+    address: 10.248.91.137
+    snmp_profile: "airos_8"
+
+  - hostname: rhxb-so-5ghz # Rocket 5AC Lite
+    address: 10.248.91.138
+    snmp_profile: "airos_8"
+
+  - hostname: rhxb-simeon # PowerBeam 5AC 400
+    address: 10.248.91.139
+    snmp_profile: "airos_8"
+
+  - hostname: rhxb-nw-5ghz # Rocket 5AC Lite
+    address: 10.248.91.140
+    snmp_profile: "airos_8"
+
+  - hostname: rhxb-dragon # NanoBeam 5AC
+    address: 10.248.91.141
+    snmp_profile: "airos_8"
+
+airos_dfs_reset:
+  - name: "rhxb-dtmb"
+    target: "10.248.91.135"
+    username: "ubnt"
+    password: "file:/root/pwd"
+    daytime_limit: "2-7"
+
+  - name: "rhxb-no-5ghz"
+    target: "10.248.91.136"
+    username: "ubnt"
+    password: "file:/root/pwd"
+    daytime_limit: "2-7"
+
+  - name: "rhxb-sw-5ghz"
+    target: "10.248.91.137"
+    username: "ubnt"
+    password: "file:/root/pwd"
+    daytime_limit: "2-7"
+
+  - name: "rhxb-so-5ghz"
+    target: "10.248.91.138"
+    username: "ubnt"
+    password: "file:/root/pwd"
+    daytime_limit: "2-7"
+
+  - name: "rhxb-simeon"
+    target: "10.248.91.139"
+    username: "ubnt"
+    password: "file:/root/pwd"
+    daytime_limit: "2-7"
+
+  - name: "rhxb-nw-5ghz"
+    target: "10.248.91.140"
+    username: "ubnt"
+    password: "file:/root/pwd"
+    daytime_limit: "2-7"
+
+  - name: "rhxb-dragon"
+    target: "10.248.91.141"
+    username: "ubnt"
+    password: "file:/root/pwd"
+    daytime_limit: "2-7"
+
+ipv6_prefix: "2001:bf7:750:ba00::/56"
+
+# Rhxb got following prefixes:
+# DHCP: 10.36.198.240/28
+# Router: 
+# --MGMT: 10.248.91.128/25
+# --MESH: 10.36.199.0/28
+
+# Disable noping as we use dhcp and static assignments
+# both in mgmt network
+dhcp_no_ping: false
+
+networks:
+  - vid: 10
+    role: mesh
+    name: mesh_l105
+    prefix: 10.36.199.0
+    ipv6_subprefix: -1
+    mesh_metric: 128
+    ptp: true
+
+  - vid: 11
+    role: mesh
+    name: mesh_flughafen
+    prefix: 10.36.199.1
+    ipv6_subprefix: -2
+    mesh_metric: 128
+    ptp: true
+
+  - vid: 12
+    role: mesh
+    name: mesh_rhnk
+    prefix: 10.36.199.2
+    ipv6_subprefix: -3
+    mesh_metric: 128
+    ptp: true
+
+  - vid: 14
+    role: mesh
+    name: mesh_manstein
+    prefix: 10.36.199.3
+    ipv6_subprefix: -5
+    ptp: true
+
+  - vid: 15
+    role: mesh
+    name: mesh_simeon
+    prefix: 10.36.199.4
+    ipv6_subprefix: -6
+    ptp: true
+
+  - vid: 16
+    role: mesh
+    name: mesh_technik
+    prefix: 10.36.199.5
+    ipv6_subprefix: -7
+    ptp: true
+
+  - vid: 17
+    role: mesh
+    name: mesh_dragon
+    prefix: 10.36.199.6
+    ipv6_subprefix: -8
+
+  - vid: 20
+    role: mesh
+    name: mesh_no_5ghz
+    prefix: 10.36.199.7
+    ipv6_subprefix: -20
+
+  - vid: 22
+    role: mesh
+    name: mesh_sw_5ghz
+    prefix: 10.36.199.8
+    ipv6_subprefix: -22
+
+  - vid: 23
+    role: mesh
+    name: mesh_so_5ghz
+    prefix: 10.36.199.9
+    ipv6_subprefix: -23
+
+  - vid: 24
+    role: mesh
+    name: mesh_nw_5ghz
+    prefix: 10.36.199.10
+    ipv6_subprefix: -24
+
+  - vid: 40
+    role: dhcp
+    inbound_filtering: true
+    enforce_client_isolation: true
+    prefix: 10.36.198.240/28
+    ipv6_subprefix: 0
+    assignments:
+      rhxb-unifi-core: 1
+
+  - vid: 42
+    name: mgmt
+    role: dhcp # we wanna do dhcp for the access points
+    prefix: 10.248.91.128/25
+    gateway: 1
+    dns: 1
+    ipv6_subprefix: 1
+    assignments:
+      rhxb-unifi-core: 1
+      rhxb-unifi-switch-roof: 2
+      rhxb-unifi-cloudkey: 3
+
+      # PTP
+      rhxb-unifi-l105: 4
+      rhxb-unifi-flughafen: 5
+      rhxb-unifi-manstein: 6
+      rhxb-unifi-rhnk: 8
+      rhxb-unifi-dtmb: 9
+      rhxb-unifi-simeon: 14
+
+      # PTMP
+      rhxb-unifi-no-5ghz: 10
+      rhxb-unifi-sw-5ghz: 12
+      rhxb-unifi-so-5ghz: 13
+      rhxb-unifi-nw-5ghz: 15
+      rhxb-unifi-dragon: 17
+
+#  - vid: 99
+#    name: udm
+#    role: mgmt
+#    inbound_filtering: false
+#    enforce_client_isolation: false
+#    prefix: 10.36.198.224/28
+#    ipv6_subprefix: 2
+#    assignments:
+#      rhxb-unifi-core: 1
+ 
+location__wireless_profiles__to_merge:
+  - name: testunifi
+    ifaces:
+      - mode: ap
+        ssid: testunifi.berlin.freifunk.net
+        encryption: none
+        network: dhcp
+        radio: [11a_standard, 11g_standard]
+        ifname_hint: ff
+
+      - mode: mesh
+        mesh_id: Mesh-Freifunk-Berlin
+        radio: [11a_standard, 11g_standard]
+        mcast_rate: 12000
+        mesh_fwding: 0
+        mesh_nolearn: 1
+        ifname_hint: mesh
+
